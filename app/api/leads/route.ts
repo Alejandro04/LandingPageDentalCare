@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { pool } from '@/lib/db'
 
 // Obtenemos el nombre de la tabla de la variable de entorno
-const TABLE_NAME = process.env.TABLE_LEAD_CONTACTS || 'lead_contacts'
+const TABLE_NAME = process.env.TABLE_LEAD_CONTACTS
 
 export async function GET() {
   try {
