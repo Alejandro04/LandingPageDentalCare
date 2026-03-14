@@ -1,0 +1,23 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Landing page lead capture
+model LeadContact {
+  id        String   @id @default(cuid())
+  nombre    String
+  telefono  String
+  cedula    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cedula])
+  @@index([createdAt])
+}

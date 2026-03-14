@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__demoapp__read_file",
+      "mcp__demoapp__write_file",
+      "Bash(git checkout -- prisma/schema.prisma)",
+      "Bash(npm install prisma @prisma/client pg --save)",
+      "Bash(git add app/layout.tsx app/page.tsx package.json package-lock.json app/api/ app/landing/ app/leads/ lib/ prisma/ .env.example)",
+      "Bash(git add app/layout.tsx app/page.tsx package.json package-lock.json app/api/ app/landing/ app/leads/ lib/ prisma/)"
+    ]
+  }
+}
