@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { pool } from '@/lib/db'
 
+// Obtenemos el nombre de la tabla de la variable de entorno
+const TABLE_NAME = process.env.TABLE_LEAD_CONTACTS || 'lead_contacts'
+
 export async function GET() {
   try {
+    // Usamos template literals para inyectar el nombre de la tabla
     const { rows } = await pool.query(
-      'SELECT * FROM lead_contacts ORDER BY created_at DESC'
+      `SELECT * FROM ${TABLE_NAME} ORDER BY created_at DESC`
     )
     return NextResponse.json(rows)
   } catch (error) {
@@ -28,7 +32,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { rows } = await pool.query(
-      `INSERT INTO lead_contacts (nombre, telefono, cedula)
+      `INSERT INTO ${TABLE_NAME} (nombre, telefono, cedula)
        VALUES ($1, $2, $3)
        RETURNING *`,
       [nombre, telefono, cedula]
