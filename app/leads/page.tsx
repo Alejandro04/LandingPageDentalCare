@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface Lead {
   id: number
@@ -11,10 +12,17 @@ interface Lead {
 }
 
 export default function LeadsPage() {
+  const router = useRouter()
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
+
+  const handleLogout = async () => {
+    await fetch('/api/auth', { method: 'DELETE' })
+    router.push('/login')
+    router.refresh()
+  }
 
   useEffect(() => {
     fetch('/api/leads')
@@ -49,29 +57,40 @@ export default function LeadsPage() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full border-2 border-blue-600 bg-blue-50 flex items-center justify-center">
               <svg viewBox="0 0 64 64" className="w-6 h-6" fill="none">
-                <path d="M20 24 C20 14 44 14 44 24 C44 30 40 38 36 44 C34 48 30 48 28 44 C24 38 20 30 20 24Z" fill="url(#tg)"/>
+                <path d="M20 24 C20 14 44 14 44 24 C44 30 40 38 36 44 C34 48 30 48 28 44 C24 38 20 30 20 24Z" fill="url(#tg)" />
                 <defs>
                   <linearGradient id="tg" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#bae6fd"/>
-                    <stop offset="100%" stopColor="#0284c7"/>
+                    <stop offset="0%" stopColor="#bae6fd" />
+                    <stop offset="100%" stopColor="#0284c7" />
                   </linearGradient>
                 </defs>
               </svg>
             </div>
             <div>
-              <p className="text-xs text-slate-400 font-medium">Dental Care · San Juan de Colón</p>
+              <p className="text-xs text-slate-400 font-medium">Dental Care · Michelena</p>
               <h1 className="text-lg font-bold text-blue-900 leading-tight">Panel de Registros</h1>
             </div>
           </div>
-          <a
-            href="/landing"
-            className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Ver Landing
-          </a>
+          <div className="flex items-center gap-3">
+            <a
+              href="/"
+              className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Ver Landing
+            </a>
+            <button
+              onClick={handleLogout}
+              className="text-sm text-slate-500 hover:text-rose-600 font-medium flex items-center gap-1 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Salir
+            </button>
+          </div>
         </div>
       </header>
 
