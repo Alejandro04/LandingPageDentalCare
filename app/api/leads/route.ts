@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { pool } from '@/lib/db'
 
 export async function GET() {
   try {
-    const leads = await prisma.leadContact.findMany({
-      orderBy: { createdAt: 'desc' },
-    })
-    return NextResponse.json(leads)
+    const { rows } = await pool.query(
+      'SELECT * FROM lead_contacts ORDER BY created_at DESC'
+    )
+    return NextResponse.json(rows)
   } catch (error) {
     console.error('Error fetching leads:', error)
     return NextResponse.json(
@@ -18,8 +18,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json()
-    const { nombre, telefono, cedula } = body
+    const { nombre, telefono, cedula } = await req.json()
 
     if (!nombre || !telefono || !cedula) {
       return NextResponse.json(
@@ -28,11 +27,14 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const lead = await prisma.leadContact.create({
-      data: { nombre, telefono, cedula },
-    })
+    const { rows } = await pool.query(
+      `INSERT INTO lead_contacts (nombre, telefono, cedula)
+       VALUES ($1, $2, $3)
+       RETURNING *`,
+      [nombre, telefono, cedula]
+    )
 
-    return NextResponse.json(lead, { status: 201 })
+    return NextResponse.json(rows[0], { status: 201 })
   } catch (error) {
     console.error('Error creating lead:', error)
     return NextResponse.json(

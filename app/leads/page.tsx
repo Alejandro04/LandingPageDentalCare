@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react'
 
 interface Lead {
-  id: string
+  id: number
   nombre: string
   telefono: string
   cedula: string
-  createdAt: string
+  created_at: string
 }
 
 export default function LeadsPage() {
@@ -85,14 +85,14 @@ export default function LeadsPage() {
           <div className="bg-white rounded-2xl px-6 py-5 shadow-sm border border-slate-100">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Hoy</p>
             <p className="text-3xl font-extrabold text-cyan-600">
-              {leads.filter(l => new Date(l.createdAt).toDateString() === new Date().toDateString()).length}
+              {leads.filter(l => new Date(l.created_at).toDateString() === new Date().toDateString()).length}
             </p>
           </div>
           <div className="bg-white rounded-2xl px-6 py-5 shadow-sm border border-slate-100">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Esta semana</p>
             <p className="text-3xl font-extrabold text-blue-500">
               {leads.filter(l => {
-                const d = new Date(l.createdAt)
+                const d = new Date(l.created_at)
                 const now = new Date()
                 const weekAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7)
                 return d >= weekAgo
@@ -173,7 +173,7 @@ export default function LeadsPage() {
                               {lead.cedula}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-slate-500 text-xs">{formatDate(lead.createdAt)}</td>
+                          <td className="px-6 py-4 text-slate-500 text-xs">{formatDate(lead.created_at)}</td>
                         </tr>
                       ))
                     )}
@@ -197,7 +197,7 @@ export default function LeadsPage() {
                       <div className="space-y-1 pl-12 text-sm text-slate-600">
                         <p>📞 {lead.telefono}</p>
                         <p>🪪 <span className="font-mono">{lead.cedula}</span></p>
-                        <p className="text-xs text-slate-400">{formatDate(lead.createdAt)}</p>
+                        <p className="text-xs text-slate-400">{formatDate(lead.created_at)}</p>
                       </div>
                     </div>
                   ))
