@@ -22,21 +22,21 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { nombre, telefono, cedula, edad } = await req.json()
+    const { nombre, email, telefono, cedula, edad } = await req.json()
 
     const esMenor = parseInt(edad) < 18
-    if (!nombre || !telefono || !edad || (!esMenor && !cedula)) {
+    if (!nombre || !email || !telefono || !edad || (!esMenor && !cedula)) {
       return NextResponse.json(
-        { error: 'Nombre, teléfono y edad son requeridos. Cédula es requerida para mayores de edad.' },
+        { error: 'Nombre, email, teléfono y edad son requeridos. Cédula es requerida para mayores de edad.' },
         { status: 400 }
       )
     }
 
     const { rows } = await pool.query(
-      `INSERT INTO ${TABLE_NAME} (nombre, telefono, cedula, edad)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO ${TABLE_NAME} (nombre, email, telefono, cedula, edad)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [nombre, telefono, cedula, edad]
+      [nombre, email, telefono, cedula ?? null, edad]
     )
 
     return NextResponse.json(rows[0], { status: 201 })

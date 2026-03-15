@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 interface Lead {
   id: number
   nombre: string
+  email: string
   telefono: string
   cedula: string
   edad: string
@@ -19,6 +20,12 @@ export default function LeadsPage() {
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
 
+  // Limit state
+  const [limite, setLimite] = useState<number>(0)
+  const [nuevoLimite, setNuevoLimite] = useState<string>('')
+  const [savingLimit, setSavingLimit] = useState(false)
+  const [limitMsg, setLimitMsg] = useState<{ ok: boolean; text: string } | null>(null)
+
   const handleLogout = async () => {
     await fetch('/api/auth', { method: 'DELETE' })
     router.push('/login')
@@ -26,22 +33,44 @@ export default function LeadsPage() {
   }
 
   useEffect(() => {
-    fetch('/api/leads')
-      .then(res => res.json())
-      .then(data => {
-        setLeads(data)
-        setLoading(false)
-      })
-      .catch(() => {
-        setError('No se pudieron cargar los registros')
-        setLoading(false)
-      })
+    Promise.all([
+      fetch('/api/leads').then(r => r.json()),
+      fetch('/api/limit').then(r => r.json()),
+    ]).then(([leadsData, limitData]) => {
+      setLeads(leadsData)
+      setLimite(limitData.limite ?? 0)
+      setNuevoLimite(String(limitData.limite ?? 0))
+      setLoading(false)
+    }).catch(() => {
+      setError('No se pudieron cargar los registros')
+      setLoading(false)
+    })
   }, [])
+
+  const handleLimitSave = async () => {
+    setSavingLimit(true)
+    setLimitMsg(null)
+    try {
+      const res = await fetch('/api/limit', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ limite: Number(nuevoLimite) }),
+      })
+      if (!res.ok) throw new Error()
+      setLimite(Number(nuevoLimite))
+      setLimitMsg({ ok: true, text: 'Límite actualizado correctamente' })
+    } catch {
+      setLimitMsg({ ok: false, text: 'Error al actualizar el límite' })
+    } finally {
+      setSavingLimit(false)
+    }
+  }
 
   const filtered = leads.filter(l =>
     l.nombre.toLowerCase().includes(search.toLowerCase()) ||
-    l.cedula.includes(search) ||
-    l.telefono.includes(search)
+    l.cedula?.includes(search) ||
+    l.telefono.includes(search) ||
+    l.email?.toLowerCase().includes(search.toLowerCase())
   )
 
   const formatDate = (iso: string) =>
@@ -49,6 +78,8 @@ export default function LeadsPage() {
       day: '2-digit', month: 'short', year: 'numeric',
       hour: '2-digit', minute: '2-digit',
     }).format(new Date(iso))
+
+  const cuposRestantes = limite > 0 ? Math.max(0, limite - leads.length) : null
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -73,19 +104,13 @@ export default function LeadsPage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <a
-              href="/"
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 transition-colors"
-            >
+            <a href="/" className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 transition-colors">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               Ver Landing
             </a>
-            <button
-              onClick={handleLogout}
-              className="text-sm text-slate-500 hover:text-rose-600 font-medium flex items-center gap-1 transition-colors"
-            >
+            <button onClick={handleLogout} className="text-sm text-slate-500 hover:text-rose-600 font-medium flex items-center gap-1 transition-colors">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
@@ -95,9 +120,10 @@ export default function LeadsPage() {
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
+
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="bg-white rounded-2xl px-6 py-5 shadow-sm border border-slate-100">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Total registros</p>
             <p className="text-3xl font-extrabold text-blue-700">{leads.length}</p>
@@ -109,16 +135,47 @@ export default function LeadsPage() {
             </p>
           </div>
           <div className="bg-white rounded-2xl px-6 py-5 shadow-sm border border-slate-100">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Esta semana</p>
-            <p className="text-3xl font-extrabold text-blue-500">
-              {leads.filter(l => {
-                const d = new Date(l.created_at)
-                const now = new Date()
-                const weekAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7)
-                return d >= weekAgo
-              }).length}
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Límite actual</p>
+            <p className="text-3xl font-extrabold text-blue-500">{limite > 0 ? limite : '—'}</p>
+          </div>
+          <div className={`rounded-2xl px-6 py-5 shadow-sm border ${cuposRestantes === 0 ? 'bg-amber-50 border-amber-200' : 'bg-white border-slate-100'}`}>
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Cupos restantes</p>
+            <p className={`text-3xl font-extrabold ${cuposRestantes === 0 ? 'text-amber-500' : 'text-emerald-600'}`}>
+              {cuposRestantes !== null ? cuposRestantes : '—'}
             </p>
           </div>
+        </div>
+
+        {/* Limit manager */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 px-6 py-5">
+          <h2 className="font-bold text-blue-900 mb-4">Gestionar límite de pacientes</h2>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                min="0"
+                value={nuevoLimite}
+                onChange={e => setNuevoLimite(e.target.value)}
+                className="w-32 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+                placeholder="Ej. 50"
+              />
+              <button
+                onClick={handleLimitSave}
+                disabled={savingLimit}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-60"
+              >
+                {savingLimit ? 'Guardando...' : 'Actualizar'}
+              </button>
+            </div>
+            {limitMsg && (
+              <span className={`text-sm font-medium ${limitMsg.ok ? 'text-emerald-600' : 'text-rose-600'}`}>
+                {limitMsg.ok ? '✓' : '✗'} {limitMsg.text}
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-slate-400 mt-2">
+            Pon 0 para desactivar el límite. Al alcanzar el límite, el formulario mostrará un aviso de cupos agotados.
+          </p>
         </div>
 
         {/* Search + Table */}
@@ -131,7 +188,7 @@ export default function LeadsPage() {
               </svg>
               <input
                 type="text"
-                placeholder="Buscar por nombre, cédula o teléfono..."
+                placeholder="Buscar por nombre, email, cédula..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-72 text-slate-700"
@@ -163,16 +220,17 @@ export default function LeadsPage() {
                     <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
                       <th className="text-left px-6 py-3 font-semibold">#</th>
                       <th className="text-left px-6 py-3 font-semibold">Nombre</th>
+                      <th className="text-left px-6 py-3 font-semibold">Email</th>
                       <th className="text-left px-6 py-3 font-semibold">Teléfono</th>
                       <th className="text-left px-6 py-3 font-semibold">Cédula</th>
                       <th className="text-left px-6 py-3 font-semibold">Edad</th>
-                      <th className="text-left px-6 py-3 font-semibold">Fecha de registro</th>
+                      <th className="text-left px-6 py-3 font-semibold">Fecha</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {filtered.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="text-center py-12 text-slate-400">
+                        <td colSpan={7} className="text-center py-12 text-slate-400">
                           No se encontraron registros
                         </td>
                       </tr>
@@ -188,10 +246,11 @@ export default function LeadsPage() {
                               <span className="font-semibold text-slate-800">{lead.nombre}</span>
                             </div>
                           </td>
+                          <td className="px-6 py-4 text-slate-600 text-xs">{lead.email}</td>
                           <td className="px-6 py-4 text-slate-600">{lead.telefono}</td>
                           <td className="px-6 py-4">
                             <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg text-xs font-mono font-semibold">
-                              {lead.cedula}
+                              {lead.cedula || '—'}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-slate-600">{lead.edad} años</td>
@@ -217,8 +276,9 @@ export default function LeadsPage() {
                         <p className="font-semibold text-slate-800">{lead.nombre}</p>
                       </div>
                       <div className="space-y-1 pl-12 text-sm text-slate-600">
+                        <p>✉️ {lead.email}</p>
                         <p>📞 {lead.telefono}</p>
-                        <p>🪪 <span className="font-mono">{lead.cedula}</span></p>
+                        <p>🪪 <span className="font-mono">{lead.cedula || '—'}</span></p>
                         <p>🎂 {lead.edad} años</p>
                         <p className="text-xs text-slate-400">{formatDate(lead.created_at)}</p>
                       </div>
