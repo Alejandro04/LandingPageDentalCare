@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { pool } from '@/lib/db'
 
 const LEAD_TABLE = process.env.TABLE_LEAD_CONTACTS
-const LIMIT_TABLE = 'patients_limit'
+const LIMIT_TABLE = process.env.LIMIT_TABLE
 
 export async function GET() {
   try {
