@@ -8,7 +8,7 @@ export async function GET() {
   try {
     // Usamos template literals para inyectar el nombre de la tabla
     const { rows } = await pool.query(
-      `SELECT * FROM ${TABLE_NAME} ORDER BY created_at DESC`
+      `SELECT * FROM ${TABLE_NAME} ORDER BY created_at ASC`
     )
     return NextResponse.json(rows)
   } catch (error) {
