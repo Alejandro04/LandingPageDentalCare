@@ -147,6 +147,23 @@ export default function LandingPage() {
 
             <div>
               <label className="block text-sm font-semibold text-blue-900 mb-1.5">
+                Edad <span className="text-cyan-500">*</span>
+              </label>
+              <input
+                type="number"
+                name="edad"
+                value={form.edad}
+                onChange={handleChange}
+                required
+                min="1"
+                max="120"
+                placeholder="Ej. 35"
+                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-blue-900 mb-1.5">
                 Cédula de identidad{' '}
                 {esMenor
                   ? <span className="text-slate-400 font-normal text-xs">(opcional para menores de edad)</span>
@@ -160,23 +177,6 @@ export default function LandingPage() {
                 onChange={handleChange}
                 required={!esMenor}
                 placeholder="Ej. V-12345678"
-                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-blue-900 mb-1.5">
-                Edad <span className="text-cyan-500">*</span>
-              </label>
-              <input
-                type="number"
-                name="edad"
-                value={form.edad}
-                onChange={handleChange}
-                required
-                min="1"
-                max="120"
-                placeholder="Ej. 35"
                 className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition text-sm"
               />
             </div>
