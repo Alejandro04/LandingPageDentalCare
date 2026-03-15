@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 interface FormData {
   nombre: string
@@ -88,76 +89,45 @@ export default function LandingPage() {
 
       {/* Logo */}
       <section className="flex justify-center pb-10">
-        <div className="relative flex items-center justify-center w-40 h-40">
-          {/* Outer ring */}
-          <div className="absolute inset-0 rounded-full border-4 border-blue-600 shadow-lg bg-white" />
-          {/* Inner content */}
-          <div className="relative flex flex-col items-center gap-1 z-10">
-            <svg viewBox="0 0 80 70" className="w-16 h-14" fill="none">
-              <path
-                d="M14 28 C14 10 66 10 66 28 C66 40 58 54 50 62 C46 68 34 68 30 62 C22 54 14 40 14 28Z"
-                fill="url(#logoGrad)"
-              />
-              <path
-                d="M30 28 C30 22 50 22 50 28 C50 32 48 36 46 40 C45 42 35 42 34 40 C32 36 30 32 30 28Z"
-                fill="white" fillOpacity="0.4"
-              />
-              <defs>
-                <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#bae6fd" />
-                  <stop offset="60%" stopColor="#38bdf8" />
-                  <stop offset="100%" stopColor="#0284c7" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <span className="text-xs font-extrabold text-blue-800 tracking-wide leading-none">DENTAL CARE</span>
-            <span className="text-[10px] font-semibold text-blue-500 tracking-widest leading-none">MICHELENA</span>
-          </div>
-        </div>
+        <Image
+          src="/logo.jpg"
+          alt="Dental Care Michelena"
+          width={160}
+          height={160}
+          className="rounded-full shadow-lg"
+          priority
+        />
       </section>
 
-      {/* Form / Cupo agotado */}
+      {/* Form */}
       <section className="max-w-lg mx-auto px-4 pb-16">
 
-        {cupoAgotado ? (
-          /* ── Alerta cupo agotado ── */
-          <div className="bg-white rounded-2xl shadow-xl border border-amber-200 overflow-hidden">
-            <div className="bg-gradient-to-r from-amber-500 to-orange-400 px-8 py-6 text-white text-center">
-              <svg className="w-10 h-10 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-              </svg>
-              <h3 className="text-2xl font-bold mb-1">Cupos agotados</h3>
-              <p className="text-amber-100 text-sm">Jornada actual completa</p>
-            </div>
-            <div className="px-8 py-8 text-center space-y-4">
-              <p className="text-slate-700 leading-relaxed">
-                Los cupos para la jornada actual están <strong>completos</strong>.
-                Gracias por tu interés — estudiaremos tu caso para incluirte en una
-                <strong> segunda jornada</strong>.
+        {/* ── Banner cupos agotados (informativo, no bloquea) ── */}
+        {cupoAgotado && (
+          <div className="mb-5 bg-amber-50 border border-amber-300 rounded-2xl px-5 py-4 flex gap-3 items-start">
+            <svg className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            </svg>
+            <div>
+              <p className="text-amber-800 font-semibold text-sm">Cupos de la jornada actual completos</p>
+              <p className="text-amber-700 text-xs mt-0.5 leading-relaxed">
+                Gracias por tu interés — estudiaremos tu caso para incluirte en una <strong>segunda jornada</strong>. Puedes registrarte de todas formas.
               </p>
-              <p className="text-slate-500 text-sm">
-                Puedes comunicarte directamente con nosotros para más información.
-              </p>
-              <div className="flex items-center justify-center gap-2 text-blue-700 font-bold pt-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-                +58 424-7434085
-              </div>
             </div>
           </div>
-        ) : (
-          /* ── Formulario normal ── */
-          <div className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-700 to-cyan-500 px-8 py-6 text-white text-center">
-              <h3 className="text-2xl font-bold mb-1">Solicitar Cita</h3>
-              <p className="text-blue-100 text-sm">Completa tus datos y te llamamos</p>
-              {limite !== null && limite > 0 && (
-                <p className="text-blue-200 text-xs mt-1">
-                  {total} de {limite} cupos ocupados
-                </p>
-              )}
-            </div>
+        )}
+
+        {/* ── Formulario ── */}
+        <div className="bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden">
+          <div className="bg-gradient-to-r from-blue-700 to-cyan-500 px-8 py-6 text-white text-center">
+            <h3 className="text-2xl font-bold mb-1">Solicitar Cita</h3>
+            <p className="text-blue-100 text-sm">Completa tus datos y te llamamos</p>
+            {limite !== null && limite > 0 && (
+              <p className="text-blue-200 text-xs mt-1">
+                {total} de {limite} cupos ocupados
+              </p>
+            )}
+          </div>
 
             <form onSubmit={handleSubmit} className="px-8 py-8 space-y-5">
               {state.success && (
@@ -262,7 +232,6 @@ export default function LandingPage() {
               </p>
             </form>
           </div>
-        )}
 
         {/* Contact info */}
         <div className="mt-6 grid grid-cols-2 gap-3">
