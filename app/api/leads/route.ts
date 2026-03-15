@@ -22,20 +22,20 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { nombre, telefono, cedula } = await req.json()
+    const { nombre, telefono, cedula, edad } = await req.json()
 
-    if (!nombre || !telefono || !cedula) {
+    if (!nombre || !telefono || !cedula || !edad) {
       return NextResponse.json(
-        { error: 'Nombre, teléfono y cédula son requeridos' },
+        { error: 'Nombre, teléfono, cédula y edad son requeridos' },
         { status: 400 }
       )
     }
 
     const { rows } = await pool.query(
-      `INSERT INTO ${TABLE_NAME} (nombre, telefono, cedula)
-       VALUES ($1, $2, $3)
+      `INSERT INTO ${TABLE_NAME} (nombre, telefono, cedula, edad)
+       VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [nombre, telefono, cedula]
+      [nombre, telefono, cedula, edad]
     )
 
     return NextResponse.json(rows[0], { status: 201 })
