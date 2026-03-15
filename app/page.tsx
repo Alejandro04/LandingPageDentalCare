@@ -163,11 +163,11 @@ export default function LandingPage() {
               {/* Email */}
               <div>
                 <label className="block text-sm font-semibold text-blue-900 mb-1.5">
-                  Correo electrónico <span className="text-cyan-500">*</span>
+                  Correo electrónico <span className="text-slate-400 font-normal text-xs">(opcional)</span>
                 </label>
                 <input
                   type="email" name="email" value={form.email} onChange={handleChange}
-                  required placeholder="Ej. juan@correo.com"
+                  placeholder="Ej. juan@correo.com"
                   className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition text-sm"
                 />
               </div>
