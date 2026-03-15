@@ -19,6 +19,8 @@ export default function LandingPage() {
   const [form, setForm] = useState<FormData>({ nombre: '', telefono: '', cedula: '', edad: '' })
   const [state, setState] = useState<FormState>({ loading: false, success: false, error: null })
 
+  const esMenor = parseInt(form.edad) < 18 && form.edad !== ''
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
@@ -145,21 +147,6 @@ export default function LandingPage() {
 
             <div>
               <label className="block text-sm font-semibold text-blue-900 mb-1.5">
-                Cédula de identidad <span className="text-cyan-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="cedula"
-                value={form.cedula}
-                onChange={handleChange}
-                required
-                placeholder="Ej. V-12345678"
-                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-blue-900 mb-1.5">
                 Edad <span className="text-cyan-500">*</span>
               </label>
               <input
@@ -171,6 +158,25 @@ export default function LandingPage() {
                 min="1"
                 max="120"
                 placeholder="Ej. 35"
+                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-blue-900 mb-1.5">
+                Cédula de identidad{' '}
+                {esMenor
+                  ? <span className="text-slate-400 font-normal text-xs">(opcional para menores de edad)</span>
+                  : <span className="text-cyan-500">*</span>
+                }
+              </label>
+              <input
+                type="text"
+                name="cedula"
+                value={form.cedula}
+                onChange={handleChange}
+                required={!esMenor}
+                placeholder="Ej. V-12345678"
                 className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition text-sm"
               />
             </div>
