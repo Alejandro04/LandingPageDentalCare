@@ -8,6 +8,7 @@ interface Lead {
   nombre: string
   telefono: string
   cedula: string
+  edad: string
   created_at: string
 }
 
@@ -164,6 +165,7 @@ export default function LeadsPage() {
                       <th className="text-left px-6 py-3 font-semibold">Nombre</th>
                       <th className="text-left px-6 py-3 font-semibold">Teléfono</th>
                       <th className="text-left px-6 py-3 font-semibold">Cédula</th>
+                      <th className="text-left px-6 py-3 font-semibold">Edad</th>
                       <th className="text-left px-6 py-3 font-semibold">Fecha de registro</th>
                     </tr>
                   </thead>
@@ -192,6 +194,7 @@ export default function LeadsPage() {
                               {lead.cedula}
                             </span>
                           </td>
+                          <td className="px-6 py-4 text-slate-600">{lead.edad} años</td>
                           <td className="px-6 py-4 text-slate-500 text-xs">{formatDate(lead.created_at)}</td>
                         </tr>
                       ))
@@ -216,6 +219,7 @@ export default function LeadsPage() {
                       <div className="space-y-1 pl-12 text-sm text-slate-600">
                         <p>📞 {lead.telefono}</p>
                         <p>🪪 <span className="font-mono">{lead.cedula}</span></p>
+                        <p>🎂 {lead.edad} años</p>
                         <p className="text-xs text-slate-400">{formatDate(lead.created_at)}</p>
                       </div>
                     </div>
