@@ -24,9 +24,10 @@ export async function POST(req: NextRequest) {
   try {
     const { nombre, telefono, cedula, edad } = await req.json()
 
-    if (!nombre || !telefono || !cedula || !edad) {
+    const esMenor = parseInt(edad) < 18
+    if (!nombre || !telefono || !edad || (!esMenor && !cedula)) {
       return NextResponse.json(
-        { error: 'Nombre, teléfono, cédula y edad son requeridos' },
+        { error: 'Nombre, teléfono y edad son requeridos. Cédula es requerida para mayores de edad.' },
         { status: 400 }
       )
     }
