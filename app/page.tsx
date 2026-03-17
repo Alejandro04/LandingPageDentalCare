@@ -124,7 +124,7 @@ export default function LandingPage() {
             <p className="text-blue-100 text-sm">Completa tus datos y te llamamos</p>
             {limite !== null && limite > 0 && (
               <p className="text-blue-200 text-xs mt-1">
-                {total} de {limite} cupos ocupados
+                {limite - total} de {limite} cupos disponibles
               </p>
             )}
           </div>
@@ -277,7 +277,7 @@ export default function LandingPage() {
           >
             Alejandro Roa
           </a>
-          <span className="mx-1">·</span>Software Engineer
+          <span className="mx-1">·</span>Desarrollador de Software
         </p>
       </footer>
     </main>
