@@ -261,24 +261,27 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-blue-900 text-blue-200 text-center py-5 text-xs space-y-1">
+      <footer className="bg-blue-900 text-blue-200 text-center py-5 text-xs space-y-2 px-4">
         <p>© {new Date().getFullYear()} Dental Care — Michelena. Todos los derechos reservados.</p>
-        <p className="flex items-center justify-center gap-1 text-blue-300">
-          Hecho con{' '}
-          <svg className="w-3.5 h-3.5 text-rose-400 fill-rose-400" viewBox="0 0 24 24">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-          </svg>
-          {' '}por{' '}
-          <a
-            href="https://alejandroroa.medium.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white font-semibold ml-1 hover:underline underline-offset-2 transition-all"
-          >
-            Alejandro Roa
-          </a>
-          <span className="mx-1">·</span>Desarrollador de Software
-        </p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 text-blue-300">
+          <span className="flex items-center gap-1">
+            Hecho con{' '}
+            <svg className="w-3.5 h-3.5 text-rose-400 fill-rose-400" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+            {' '}por{' '}
+            <a
+              href="https://alejandroroa.medium.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white font-semibold hover:underline underline-offset-2 transition-all"
+            >
+              Alejandro Roa
+            </a>
+          </span>
+          <span className="hidden sm:inline mx-1">·</span>
+          <span>Desarrollador de Software</span>
+        </div>
       </footer>
     </main>
   )
