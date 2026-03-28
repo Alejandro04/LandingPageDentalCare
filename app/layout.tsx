@@ -6,7 +6,6 @@ export const metadata: Metadata = {
   description: 'Solicita tu cita odontológica.',
 }
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
