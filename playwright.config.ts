@@ -3,12 +3,19 @@ import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 
-// Load test environment variables
+// Load test environment variables (optional - CI uses secrets directly)
 const envTestPath = path.resolve(__dirname, '.env.test');
-dotenv.config({ path: envTestPath });
+const envTestExists = fs.existsSync(envTestPath);
 
-// Parse .env.test to pass to webServer
+if (envTestExists) {
+  dotenv.config({ path: envTestPath });
+}
+
+// Parse .env.test to pass to webServer (if it exists)
 function loadEnvFile(filePath: string): Record<string, string> {
+  if (!fs.existsSync(filePath)) {
+    return {};
+  }
   const content = fs.readFileSync(filePath, 'utf-8');
   const env: Record<string, string> = {};
   for (const line of content.split('\n')) {
