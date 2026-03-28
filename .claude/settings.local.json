@@ -6,7 +6,12 @@
       "Bash(git checkout -- prisma/schema.prisma)",
       "Bash(npm install prisma @prisma/client pg --save)",
       "Bash(git add app/layout.tsx app/page.tsx package.json package-lock.json app/api/ app/landing/ app/leads/ lib/ prisma/ .env.example)",
-      "Bash(git add app/layout.tsx app/page.tsx package.json package-lock.json app/api/ app/landing/ app/leads/ lib/ prisma/)"
+      "Bash(git add app/layout.tsx app/page.tsx package.json package-lock.json app/api/ app/landing/ app/leads/ lib/ prisma/)",
+      "Bash(git add app/page.tsx app/leads/page.tsx app/api/leads/route.ts app/api/limit/route.ts)",
+      "Bash(git commit:*)",
+      "Bash(git add app/page.tsx)",
+      "Bash(git add app/api/limit/route.ts public/logo.jpg)",
+      "Bash(git add app/page.tsx app/api/leads/route.ts)"
     ]
   }
 }
