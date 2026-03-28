@@ -1,14 +1,14 @@
 name: E2E Tests
 
-# Trigger on push to main/feat branches and on pull requests
+# Disparadores ajustados a tu rama 'master'
 on:
   push:
     branches:
-      - main
+      - master
       - feat/**
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   e2e-tests:
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
-    # PostgreSQL service container for test database
+    # Base de datos aislada para pruebas rápidas
     services:
       postgres:
         image: postgres:15
@@ -33,31 +33,25 @@ jobs:
           - 5432:5432
 
     steps:
-      # Checkout repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      # Install dependencies
       - name: Install dependencies
-        run: npm ci
+        run: npm install # Usamos install para asegurar compatibilidad
 
-      # Install Playwright browsers
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
 
-      # Setup test database schema
       - name: Setup test database
         run: |
-          # Create tables using psql
           PGPASSWORD=postgres psql -h localhost -U postgres -d dental_care_test << 'EOF'
-          -- Lead contacts table
+          -- Tabla de contactos corregida
           CREATE TABLE IF NOT EXISTS test_contact_lead (
             id SERIAL PRIMARY KEY,
             nombre VARCHAR(255) NOT NULL,
@@ -68,45 +62,40 @@ jobs:
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           );
 
-          -- Patient limit table
+          -- Tabla de límites corregida
           CREATE TABLE IF NOT EXISTS test_patients_limit (
             id SERIAL PRIMARY KEY,
             limite INTEGER NOT NULL,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           );
-
-          -- Verify tables created
           \dt
           EOF
         env:
           PGPASSWORD: postgres
 
-      # Create .env.test file for tests
       - name: Create test environment file
         run: |
           cat > .env.test << EOF
           DATABASE_URL=postgresql://postgres:postgres@localhost:5432/dental_care_test
           DIRECT_URL=postgresql://postgres:postgres@localhost:5432/dental_care_test
-          ADMIN_PASSWORD=${{ secrets.TEST_ADMIN_PASSWORD || 'test_password_123' }}
+          ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
           TABLE_LEAD_CONTACTS=test_contact_lead
           LIMIT_TABLE=test_patients_limit
           NEXT_PUBLIC_APP_URL=http://localhost:3000
           NODE_ENV=test
           EOF
 
-      # Run Playwright tests
       - name: Run Playwright tests
         run: npx playwright test
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dental_care_test
           DIRECT_URL: postgresql://postgres:postgres@localhost:5432/dental_care_test
-          ADMIN_PASSWORD: ${{ secrets.TEST_ADMIN_PASSWORD || 'test_password_123' }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           TABLE_LEAD_CONTACTS: test_contact_lead
           LIMIT_TABLE: test_patients_limit
           NEXT_PUBLIC_APP_URL: http://localhost:3000
           NODE_ENV: test
 
-      # Upload Playwright report on failure
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
         if: always()
@@ -115,16 +104,6 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-      # Upload test results for GitHub UI
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results
-          path: test-results/
-          retention-days: 30
-
-  # Optional: Send notification on failure
   notify-on-failure:
     name: Notify on Test Failure
     runs-on: ubuntu-latest
@@ -134,4 +113,3 @@ jobs:
       - name: Notify failure
         run: |
           echo "E2E tests failed! Check the artifacts for details."
-          echo "View the Playwright report in the workflow artifacts."
