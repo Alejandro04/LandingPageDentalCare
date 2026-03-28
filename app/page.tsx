@@ -10,7 +10,6 @@ interface FormData {
   cedula: string
   edad: string
 }
-
 interface FormState {
   loading: boolean
   success: boolean
